@@ -17,6 +17,9 @@ export default defineConfig({
     },
   },
   build: {
+    // The notes route lazily loads CodeMirror + react-markdown, so its on-demand
+    // chunk is legitimately larger than the default 500 kB advisory threshold.
+    chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {
         manualChunks: {
