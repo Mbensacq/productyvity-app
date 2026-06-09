@@ -1,0 +1,4 @@
+-- Seed data.
+-- `settings` rows are per-user and require an existing auth.users row, so there
+-- is no global seed in Phase 0. A user's settings row is created by the app on
+-- first sign-in. Demo data for notes/tasks is added in later phases.
