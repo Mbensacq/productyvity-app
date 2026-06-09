@@ -13,22 +13,30 @@ function lazyRoute(element: ReactNode) {
   return <Suspense fallback={<FullScreenMessage>{t('app.loading')}</FullScreenMessage>}>{element}</Suspense>;
 }
 
-export const router = createHashRouter([
+export const router = createHashRouter(
+  [
+    {
+      path: '/login',
+      element: <LoginPage />,
+    },
+    {
+      path: '/',
+      element: (
+        <RequireAuth>
+          <AppLayout />
+        </RequireAuth>
+      ),
+      children: [{ index: true, element: lazyRoute(<NotesHomePage />) }],
+    },
+    {
+      path: '*',
+      element: <NotFoundPage />,
+    },
+  ],
   {
-    path: '/login',
-    element: <LoginPage />,
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    },
   },
-  {
-    path: '/',
-    element: (
-      <RequireAuth>
-        <AppLayout />
-      </RequireAuth>
-    ),
-    children: [{ index: true, element: lazyRoute(<NotesHomePage />) }],
-  },
-  {
-    path: '*',
-    element: <NotFoundPage />,
-  },
-]);
+);

@@ -31,7 +31,12 @@ export function renderWithSession(
 ): RenderResult {
   return render(
     <SessionContext.Provider value={value}>
-      <MemoryRouter initialEntries={initialEntries}>{ui}</MemoryRouter>
+      <MemoryRouter
+        initialEntries={initialEntries}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        {ui}
+      </MemoryRouter>
     </SessionContext.Provider>,
   );
 }
