@@ -1,5 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { normalizeTitle } from '@/domain/links';
+import { buildDailyNoteInput, formatDailyDate } from '@/domain/daily';
+import { CommandPalette } from '@/features/command-palette/CommandPalette';
 import { t } from '@/lib/i18n';
 import { NoteEditor } from './NoteEditor';
 import {
@@ -17,9 +19,21 @@ export default function NotesHomePage() {
   const updateNote = useUpdateNoteMutation();
   const deleteNote = useDeleteNoteMutation();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [paletteOpen, setPaletteOpen] = useState(false);
 
   const notes = useMemo(() => notesQuery.data ?? [], [notesQuery.data]);
   const selected = notes.find((note) => note.id === selectedId) ?? null;
+
+  useEffect(() => {
+    const handler = (event: KeyboardEvent): void => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setPaletteOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
 
   const createAndSelect = (title: string): void => {
     createNote.mutate({ title, body: '' }, { onSuccess: (note) => setSelectedId(note.id) });
@@ -32,6 +46,18 @@ export default function NotesHomePage() {
       return;
     }
     createAndSelect(title);
+  };
+
+  const openDaily = (): void => {
+    const iso = formatDailyDate(new Date());
+    const existing = notes.find((note) => note.isDaily && note.dailyDate === iso);
+    if (existing) {
+      setSelectedId(existing.id);
+      return;
+    }
+    createNote.mutate(buildDailyNoteInput(new Date()), {
+      onSuccess: (note) => setSelectedId(note.id),
+    });
   };
 
   const listButtonStyle = {
@@ -64,6 +90,40 @@ export default function NotesHomePage() {
         >
           + {t('notes.new')}
         </button>
+
+        <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.75rem' }}>
+          <button
+            type="button"
+            onClick={openDaily}
+            style={{
+              flex: 1,
+              background: 'var(--color-bg-subtle)',
+              color: 'var(--color-text)',
+              border: '1px solid var(--color-border)',
+              borderRadius: '0.4rem',
+              padding: '0.4rem',
+              cursor: 'pointer',
+            }}
+          >
+            {t('notes.daily')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setPaletteOpen(true)}
+            aria-keyshortcuts="Control+K Meta+K"
+            style={{
+              flex: 1,
+              background: 'var(--color-bg-subtle)',
+              color: 'var(--color-text)',
+              border: '1px solid var(--color-border)',
+              borderRadius: '0.4rem',
+              padding: '0.4rem',
+              cursor: 'pointer',
+            }}
+          >
+            {t('palette.open')}
+          </button>
+        </div>
 
         {notesQuery.isLoading && <p>{t('app.loading')}</p>}
         {notesQuery.isError && <p role="alert">{t('notes.loadError')}</p>}
@@ -107,6 +167,15 @@ export default function NotesHomePage() {
           <p style={{ color: 'var(--color-text-muted)' }}>{t('notes.selectPrompt')}</p>
         )}
       </section>
+
+      <CommandPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        notes={notes.map((note) => ({ id: note.id, title: note.title }))}
+        onSelectNote={(id) => setSelectedId(id)}
+        onCreateNote={() => createAndSelect(t('notes.new'))}
+        onOpenDaily={openDaily}
+      />
     </div>
   );
 }

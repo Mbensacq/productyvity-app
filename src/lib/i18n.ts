@@ -45,6 +45,12 @@ export const fr = {
   'notes.noBacklinks': 'Aucun rétrolien.',
   'notes.loadError': 'Impossible de charger les notes.',
   'notes.searchPlaceholder': 'Rechercher dans les notes…',
+  'notes.daily': 'Note du jour',
+
+  'palette.title': 'Palette de commandes',
+  'palette.placeholder': 'Rechercher une note ou une commande…',
+  'palette.open': 'Rechercher (Ctrl/Cmd-K)',
+  'palette.noResults': 'Aucun résultat.',
 
   'setup.title': 'Configuration requise',
   'setup.supabaseMissing':
