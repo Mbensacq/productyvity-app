@@ -1,8 +1,24 @@
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { RouterProvider } from 'react-router-dom';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { SessionProvider } from '@/features/auth/SessionProvider';
+import { useApplyTheme } from '@/hooks/useApplyTheme';
+import { queryClient, queryPersister } from '@/lib/queryClient';
+import { router } from '@/app/routes';
+
 export default function App() {
+  useApplyTheme();
+
   return (
-    <main>
-      <h1>Productivité</h1>
-      <p>Application en cours d&apos;initialisation…</p>
-    </main>
+    <ErrorBoundary>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister: queryPersister }}
+      >
+        <SessionProvider>
+          <RouterProvider router={router} />
+        </SessionProvider>
+      </PersistQueryClientProvider>
+    </ErrorBoundary>
   );
 }
