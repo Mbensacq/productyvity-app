@@ -96,8 +96,8 @@ Legend: `[ ]` todo · `[~]` in progress · `[x]` done · `[!]` blocked (needs hu
 
 ## Phase 2 — Productivity & tasks
 
-### 2.1 Data & RLS
-- [ ] Migrations: `tasks`, `events`, `habits`, `habit_logs`, `goals` (+ RLS + tests)
+### 2.1 Data & RLS — ✅ done
+- [x] Migrations: `tasks`, `events`, `habits`, `habit_logs`, `goals` (+ RLS + pgTAP, green in CI)
 
 ### 2.2 Pure logic
 - [ ] Recurrence engine (jsonb rule → next occurrences)
