@@ -29,8 +29,8 @@ supabase/.temp/
 *.log
 npm-debug.log*
 
-# Local scratch / personal notes
-tasks/
+# Local scratch / personal notes (root-level only)
+/tasks/
 notes.local/
 scratch/
 TODO.local.md
